@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Rishi Music</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0a0c14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <!-- High-End App Fonts: Syne (Headings & Badges) + Outfit (Body & UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-background-glow glow-1"></div>
+  <div class="app-background-glow glow-2"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">PRO</div>
+        <h1>♫ RISHI MUSIC</h1>
+        <p>Personal Hi-Fi Audio Hub</p>
+      </div>
+
+      <label class="btn-import">
+        <span class="icon">＋</span> Import Track
+        <input type="file" id="audioFileInput" accept="audio/*" multiple />
+      </label>
+
+      <!-- Director / Playlist Selector -->
+      <div class="control-card">
+        <label for="directorFilter" class="card-label">Filter Director</label>
+        <div class="custom-select-wrapper">
+          <select id="directorFilter">
+            <option value="all">All Directors</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Equalizer Selector -->
+      <div class="control-card">
+        <label for="eqPresetSelector" class="card-label">Equalizer Preset</label>
+        <div class="custom-select-wrapper">
+          <select id="eqPresetSelector">
+            <option value="Flat">🎚️ Flat</option>
+            <option value="Bass Boost">🔊 Bass Boost</option>
+            <option value="Vocal">🎤 Vocal Focus</option>
+            <option value="Rock">🎸 Rock</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Playback Speed -->
+      <div class="control-card">
+        <label class="card-label">Playback Speed</label>
+        <div class="speed-button-group">
+          <button class="btn-speed active" data-speed="1.0">1.0x</button>
+          <button class="btn-speed" data-speed="1.25">1.25x</button>
+          <button class="btn-speed" data-speed="1.5">1.5x</button>
+          <button class="btn-speed" data-speed="2.0">2.0x</button>
+        </div>
+      </div>
+
+      <!-- Sleep Timer -->
+      <div class="control-card">
+        <div class="timer-header">
+          <span class="card-label">Sleep Timer</span>
+          <span id="sleepTimerDisplay" class="timer-badge">Off</span>
+        </div>
+        <div class="timer-button-group">
+          <button id="timer15" class="btn-pill" type="button">15m</button>
+          <button id="timer30" class="btn-pill" type="button">30m</button>
+          <button id="timer60" class="btn-pill" type="button">60m</button>
+          <button id="timerOff" class="btn-pill active" type="button">Off</button>
+        </div>
+      </div>
+
+      <!-- Playlists Section -->
+      <div class="sidebar-section">
+        <div class="section-title">
+          <span>Playlists</span>
+          <button id="newPlaylistBtn" class="btn-icon-text">+ New</button>
+        </div>
+        <div id="playlistsContainer" class="playlists-list"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Sticky Top Bar -->
+      <header class="top-nav">
+        <div class="view-header-group">
+          <h2 id="viewTitle">All Songs</h2>
+          <span id="dashboardGreeting" class="greeting-subtitle">Good evening, Rishi 👋</span>
+        </div>
+
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search track, director, album..." />
+        </div>
+      </header>
+
+      <div class="content-scroll-pane">
+        <!-- Top Directors Horizontal Hub -->
+        <section class="dashboard-hub">
+          <div class="section-heading">
+            <h3>Top Directors</h3>
+            <span class="heading-tag">Browse by Artist</span>
+          </div>
+          <div class="directors-grid" id="topDirectorsList"></div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section class="favorites-section">
+          <div class="section-heading">
+            <h3>⭐ Favorites</h3>
+            <span class="heading-tag">Quick Play</span>
+          </div>
+          <div class="favorites-container" id="favoritesContainer"></div>
+        </section>
+
+        <!-- Main Library -->
+        <section class="library-section">
+          <div class="section-heading">
+            <h3>Library</h3>
+            <span class="heading-tag" id="trackCountBadge">0 tracks</span>
+          </div>
+          <div class="song-list" id="songListContainer"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Bottom Audio Player -->
+    <footer class="player-bar">
+      <!-- Track Meta Info (Photo/Artwork removed) -->
+      <div class="meta-box">
+        <div class="meta-text">
+          <div class="track-title" id="playerTitle">No track playing</div>
+          <div class="track-artist" id="playerArtist">Select a track from your library</div>
+        </div>
+        <button id="playerFavoriteBtn" class="control-btn-subtle" aria-label="Favorite">🤍</button>
+      </div>
+
+      <!-- Central Controls and Progress Bar -->
+      <div class="player-center">
+        <div class="controls-box">
+          <button id="shuffleBtn" class="control-btn-icon" title="Shuffle Mode">🔀</button>
+          <button id="prevBtn" class="control-btn-icon" title="Previous Track">⏮</button>
+          <button id="playBtn" class="control-btn-primary" title="Play / Pause">▶</button>
+          <button id="nextBtn" class="control-btn-icon" title="Next Track">⏭</button>
+          <button id="repeatBtn" class="control-btn-icon" title="Repeat Mode">🔁</button>
+        </div>
+
+        <div class="slider-box">
+          <span id="currentTime">0:00</span>
+          <div class="range-container">
+            <input type="range" id="progressBar" min="0" max="100" value="0" step="0.1" />
+          </div>
+          <span id="totalTime">0:00</span>
+        </div>
+      </div>
+
+      <!-- Extra Controls (Volume & Mute) -->
+      <div class="player-right">
+        <button id="muteBtn" class="control-btn-subtle" title="Mute/Unmute">🔊</button>
+        <div class="volume-slider-box">
+          <input type="range" id="volumeBar" min="0" max="1" value="1" step="0.05" />
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Persistent Floating Mini Player -->
+  <aside class="mini-player" id="miniPlayer" style="display: none;">
+    <div class="mini-pulse-dot"></div>
+    <div class="mini-meta">
+      <span class="mini-title" id="miniPlayerTitle">No track playing</span>
+      <span class="mini-artist" id="miniPlayerArtist"></span>
+    </div>
+    <div class="mini-controls">
+      <button id="miniPlayBtn" class="control-btn-mini" aria-label="Play/Pause">▶</button>
+    </div>
+  </aside>
+
+  <audio id="audioEngine" preload="auto" playsinline></audio>
+  <script src="app.js"></script>
+</body>
+</html>
